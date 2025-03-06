@@ -1,6 +1,17 @@
-import React from 'react';
+import React, {useEffect} from 'react';
+import {useSelector} from "react-redux";
+import {useNavigate} from "react-router";
 
 const User = () => {
+    const token = useSelector((state) => state.login.token);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (!token) {
+            navigate("/sign-in");
+        }
+    }, [token, navigate]);
+
     return (
         <main className="main bg-dark">
             <div className="header">
