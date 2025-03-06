@@ -8,12 +8,11 @@ const Header = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const token = useSelector((state) => state.login.token);
-    console.log(token)
 
     const logOut = () => {
         dispatch(getLogout());
-        navigate('/sign-in');
-    }
+        navigate('/');
+    };
 
     return (
         <nav className="main-nav">

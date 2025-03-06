@@ -24,7 +24,7 @@ const Login = () => {
         if (results.isSuccess && results.data.body?.token) {
             dispatch(setToken(results.data.body.token));
         } else if (results.isError) {
-            setErrorMessage("Identifiants invalides.");
+            setErrorMessage(results.error.data.message);
         }
     }, [results, dispatch]);
 

@@ -1,10 +1,17 @@
-import React, {useEffect} from 'react';
-import {useSelector} from "react-redux";
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router";
+import {useUpdateProfileMutation} from "../store/api/userApi.js";
+import { setUserInfos} from "../store/slices/userSlice.js";
 
 const User = () => {
     const token = useSelector((state) => state.login.token);
+    const userInfos = useSelector(state => state.user.userInfos);
+    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [edit, setEdit] = useState(false);
+    const [updateProfile, results] = useUpdateProfileMutation();
+    const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
         if (!token) {
@@ -12,11 +19,44 @@ const User = () => {
         }
     }, [token, navigate]);
 
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        const firstname = event.target.firstname.value;
+        const lastname = event.target.lastname.value;
+
+        await updateProfile({ firstname, lastname, token });
+    }
+
+    useEffect(() => {
+        if (results.isSuccess && results.data.body?.firstName && results.data.body?.lastName) {
+            dispatch(setUserInfos({ firstName: results.data.body.firstName, lastName: results.data.body.lastName }));
+            setEdit(false);
+        } else if (results.isError) {
+            setErrorMessage(results.error.data.message);
+        }
+    }, [results, dispatch]);
+
     return (
         <main className="main bg-dark">
             <div className="header">
-                <h1>Welcome back<br/>Tony Jarvis!</h1>
-                <button className="edit-button">Edit Name</button>
+                <h1>Welcome back<br/> {userInfos.firstName} {userInfos.lastName}</h1>
+                { !edit ?
+                <button className="edit-button" onClick={() => setEdit(true)}>Edit Name</button>
+                :<form onSubmit={handleSubmit} className="edit-form">
+                    <div>
+                        <input type="text" name="firstname" id="firstname" placeholder="Tony"/>
+                        <input type="text" name="lastname" id="lastname" placeholder="Jarvis"/>
+                    </div>
+                    <div>
+                        <button type="submit">Save</button>
+                        <button onClick={()=> setEdit(false)}>Cancel</button>
+                    </div>
+                </form>
+                }
+
+                {results.isLoading && <p>Loading...</p>}
+                {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
             </div>
             <h2 className="sr-only">Accounts</h2>
             <section className="account">
