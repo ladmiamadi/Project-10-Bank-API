@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import {useNavigate} from "react-router";
-import {useUpdateProfileMutation} from "../store/api/userApi.js";
+import {useGetUserInformationsMutation, useUpdateProfileMutation} from "../store/api/userApi.js";
 import { setUserInfos} from "../store/slices/userSlice.js";
 
 const User = () => {
@@ -11,6 +11,7 @@ const User = () => {
     const navigate = useNavigate();
     const [edit, setEdit] = useState(false);
     const [updateProfile, results] = useUpdateProfileMutation();
+    const [getUserInformations, informations] = useGetUserInformationsMutation();
     const [errorMessage, setErrorMessage] = useState("");
 
     useEffect(() => {
@@ -19,12 +20,27 @@ const User = () => {
         }
     }, [token, navigate]);
 
+    useEffect(() => {
+        if (token) {
+            getUserInformations({ token });
+        }
+    }, [token, getUserInformations]);
+
+    useEffect(() => {
+        if (informations.isSuccess) {
+            const { firstName, lastName } = informations.data.body;
+            if (firstName && lastName) {
+                dispatch(setUserInfos({ firstName, lastName }));
+            }
+        } else if (informations.isError) {
+            setErrorMessage(informations.error.data.message);
+        }
+    }, [informations, dispatch]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-
         const firstname = event.target.firstname.value;
         const lastname = event.target.lastname.value;
-
         await updateProfile({ firstname, lastname, token });
     }
 

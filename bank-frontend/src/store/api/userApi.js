@@ -33,9 +33,20 @@ export const userApi = createApi({
                         }
                     }
                 }
+            }),
+            getUserInformations: builder.mutation({
+                query: (credentials) => {
+                    return {
+                        url: '/user/profile',
+                        method: 'POST',
+                        headers: {
+                            authorization: `Bearer ${credentials.token}`
+                        }
+                    }
+                }
             })
         }
     }
 });
 
-export const {useGetTokenMutation, useUpdateProfileMutation} = userApi;
+export const {useGetTokenMutation, useUpdateProfileMutation, useGetUserInformationsMutation } = userApi;
