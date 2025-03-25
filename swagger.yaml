@@ -142,6 +142,8 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
+        '404':
+          description: Unknown account ID
   /transactions:
     get:
       security:
@@ -197,6 +199,8 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
+        '404':
+          description: Unknown transaction ID
     put:
       security:
         - Bearer: []
@@ -232,6 +236,8 @@ paths:
           description: Invalid Fields
         '500':
           description: Internal Server Error
+        '404':
+          description: Unknown transaction ID
 securityDefinitions:
   Bearer:
     type: apiKey
