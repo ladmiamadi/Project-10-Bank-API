@@ -70,6 +70,7 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
+          type: string
       produces:
         - application/json
       responses:
@@ -93,6 +94,7 @@ paths:
           name: Authorization
           description: Attach Bearer JWT token
           required: true
+          type: string
         - in: body
           name: body
           description: Update user profile attributes
@@ -106,6 +108,126 @@ paths:
           description: User profile retrieved successully
           schema:
             $ref: '#/definitions/ApiResponse'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /account/{id}:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: Transactions API
+      description: API for fetching account details
+      parameters:
+        - in: path
+          name: id
+          description: The ID of the account
+          required: true
+          type: integer
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Account details retrieved successully
+          schema:
+            $ref: '#/definitions/UserBalance'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /transactions:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: User Transactions API
+      description: API for fetching  transactions
+      parameters:
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transactions retrieved successully
+          schema:
+            $ref: '#/definitions/UserAccounts'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+  /account/transaction/{transactionId}:
+    get:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: Transactions API
+      description: API for fetching a user transaction details
+      parameters:
+        - in: path
+          name: transactionId
+          description: The ID of the transaction
+          required: true
+          type: integer
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: Transaction details retrieved successully
+          schema:
+            $ref: '#/definitions/UserTransaction'
+        '400':
+          description: Invalid Fields
+        '500':
+          description: Internal Server Error
+    put:
+      security:
+        - Bearer: []
+      tags:
+        - Transactions Module
+      summary: transactions API
+      description: API for updating user transaction details
+      parameters:
+        - in: path
+          name: transactionId
+          description: The ID of the transaction
+          required: true
+          type: integer
+        - in: header
+          name: Authorization
+          description: Attach Bearer JWT token
+          required: true
+          type: string
+        - in: body
+          name: body
+          description: Update user transaction attributes
+          required: true
+          schema:
+            $ref: '#/definitions/UpdateTransaction'
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: transaction updated successfully
+          schema:
+            $ref: '#/definitions/UserTransaction'
         '400':
           description: Invalid Fields
         '500':
@@ -164,3 +286,61 @@ definitions:
         type: string
       lastName:
         type: string
+  UserBalance:
+    type: object
+    properties:
+      name:
+        type: string
+      balance:
+        type: string
+  UpdateTransaction:
+    type: object
+    properties:
+      category:
+        type: string
+      note:
+        type: string
+  UserTransaction:
+    type: object
+    properties:
+      idAccount:
+        type: string
+      idtransaction:
+        type: integer
+      date:
+        type: string
+        format: date-time
+      description:
+        type: string
+      amount:
+        type: string
+      balance:
+        type: string
+      transactionType:
+        type: string
+      category:
+        type: string
+      note:
+        type: string
+  UserAccount:
+    type: object
+    properties:
+      idAccount:
+        type: string
+      balance:
+        type: number
+      accountName:
+        type: string
+      actualMonthTransactions:
+        type: array
+        items:
+          $ref: '#/definitions/UserTransaction'
+  UserAccounts:
+    type: array
+    items:
+      $ref: '#/definitions/UserAccount'
+
+
+
+
+
